@@ -1,0 +1,44 @@
+import pandas as pd
+from fpdf import FPDF
+
+# Read data from CSV
+df = pd.read_csv("sales_data.csv")
+
+# Analyze data
+total_sales = df['Sales'].sum()
+top_salesperson = df.loc[df['Sales'].idxmax()]
+
+# Create PDF
+pdf = FPDF()
+pdf.add_page()
+pdf.set_font("Arial", size=12)
+
+# Title
+pdf.set_font("Arial", 'B', 16)
+pdf.cell(0, 10, "Sales Report", ln=True, align='C')
+
+# Summary
+pdf.set_font("Arial", size=12)
+pdf.ln(10)
+pdf.cell(0, 10, f"Total Sales: ${total_sales}", ln=True)
+pdf.cell(0, 10, f"Top Salesperson: {top_salesperson['Name']} (${top_salesperson['Sales']})", ln=True)
+
+# Table header
+pdf.ln(10)
+pdf.set_font("Arial", 'B', 12)
+pdf.cell(50, 10, "Name", 1)
+pdf.cell(40, 10, "Sales", 1)
+pdf.cell(40, 10, "Region", 1)
+pdf.ln()
+
+# Table data
+pdf.set_font("Arial", size=12)
+for index, row in df.iterrows():
+    pdf.cell(50, 10, row['Name'], 1)
+    pdf.cell(40, 10, str(row['Sales']), 1)
+    pdf.cell(40, 10, row['Region'], 1)
+    pdf.ln()
+
+# Save PDF
+pdf.output("sales_report.pdf")
+print("PDF report saved as sales_report.pdf")
